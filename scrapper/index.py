@@ -61,7 +61,9 @@ def get_page(word: str, start_date: str, end_date: str, page: int = 1, tries: in
         res = requests.get(url)
         return res.content
     except requests.RequestException:
+        print("Can't reach the page <%s>" % url)
         time.sleep(random.randint(0, 5))
+        print("Retry")
         return get_page(word, start_date, end_date, page, tries+1)
 
 
@@ -80,7 +82,7 @@ def get_records(tree: html.HtmlElement) -> List[dict]:
             "cover": [*record.xpath("a[@class=\"portada\"]/img/@src"), ""][0].strip(),
             "link": [*record.xpath("a[@class=\"portada\"]/@href"), ""][0].strip(),
             "edition": [*record.xpath("a[@class=\"edicion\"]/text()"), ""][0].strip(),
-            "text": [*record.xpath("p/text()"), ""][0].strip()
+            "text": "".join(record.xpath("p/text()")).strip()
         }
 
         date_match = re.search(
@@ -141,7 +143,7 @@ def main(word: str = "lavadora", start_date: str = "01-01-1950", end_date: str =
     pages = get_pages(tree)
 
     while len(pages) > 0:
-        time.sleep(random.randint(0, 2))
+        time.sleep(random.randint(0, 1))
         page = pages.pop(0)
         print("Navigate to page -> %s" % page)
         page_content = get_page(word, start_date, end_date, page)
