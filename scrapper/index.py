@@ -28,9 +28,9 @@ def get_url(word: str, start_date: str, end_date: str, page: int = 1) -> str:
         "bd": sd.day,
         "bm": sd.month,
         "by": sd.year,
-        "ed": sd.day,
-        "em": sd.month,
-        "ey": sd.year,
+        "ed": ed.day,
+        "em": ed.month,
+        "ey": ed.year,
         "page": page,
         "keywords": "",
         "__checkbox_home": "true",
@@ -56,17 +56,18 @@ def get_page(word: str, start_date: str, end_date: str, page: int = 1, tries: in
         return b""
 
     url = get_url(word, start_date, end_date, page)
+    print("Request from <%s>" % url)
     try:
         res = requests.get(url)
         return res.content
     except requests.RequestException:
-        time.sleep(random.randint(0, 3))
+        time.sleep(random.randint(0, 5))
         return get_page(word, start_date, end_date, page, tries+1)
 
 
 def get_records(tree: html.HtmlElement) -> List[dict]:
     records = tree.xpath(
-        "div[@class=\"contentSeccio\"]/ul[@class=\"destacat\"]/li")
+        "//div[@class=\"contentSeccio\"]/ul[@class=\"destacat\"]/li")
     if len(records) == 0:
         return []
 
@@ -76,10 +77,10 @@ def get_records(tree: html.HtmlElement) -> List[dict]:
             "year": "",
             "month": "",
             "day": "",
-            "cover": [record.xpath("a[@class=\"portada\"]/img/@src"), ""][0],
-            "link": [record.xpath("a[@class=\"portada\"]/@href"), ""][0],
-            "edition": [record.xpath("a[@class=\"edicion\"]/text()"), ""][0],
-            "text": [record.xpath("p/text()"), ""][0]
+            "cover": [*record.xpath("a[@class=\"portada\"]/img/@src"), ""][0].strip(),
+            "link": [*record.xpath("a[@class=\"portada\"]/@href"), ""][0].strip(),
+            "edition": [*record.xpath("a[@class=\"edicion\"]/text()"), ""][0].strip(),
+            "text": [*record.xpath("p/text()"), ""][0].strip()
         }
 
         date_match = re.search(
@@ -102,15 +103,16 @@ def get_pages(tree: html.HtmlElement, acum: List[int] = []) -> List[int]:
     for page in paginator:
         try:
             page = int(page)
-            if len(acum) > 0 and page not in acum and min(acum) < page:
+            if (len(acum) > 0 and page not in acum and min(acum) < page) or len(acum) == 0:
                 pages.append(page)
         except:
             pass
 
-    return pages
+    return acum + pages
 
 
 def write_records(records: List[dict], fpath: str = "resultats.csv") -> None:
+    
     if not os.path.isfile(fpath):
         Path(fpath).touch()
 
@@ -122,25 +124,32 @@ def write_records(records: List[dict], fpath: str = "resultats.csv") -> None:
         fconn.seek(0, 2)
         for record in records:
             fconn.write(re.sub(
-                r"(\r|\n)", "", "{year},{month},{day},{edition},{text},{link},{cover}".format(**record)))
+                r"(\r|\n)", "", "{year},{month},{day},{edition},{text},{link},{cover}".format(**record)) + "\n")
 
 
 def main(word: str = "lavadora", start_date: str = "01-01-1950", end_date: str = "31-12-1979",
          output_path: str = "resultats.csv") -> io.TextIOWrapper:
-    import pdb; pdb.set_trace()
+
+    if os.path.isfile(output_path):
+        unlink(output_path)
+
+    print("Search results for %s from %s to %s" % (word, start_date, end_date))
     page_content = get_page(word, start_date, end_date)
     tree = html.fromstring(page_content)
     records = get_records(tree)
     write_records(records)
     pages = get_pages(tree)
 
-    while len(pages):
+    while len(pages) > 0:
+        time.sleep(random.randint(0, 2))
         page = pages.pop(0)
+        print("Navigate to page -> %s" % page)
         page_content = get_page(word, start_date, end_date, page)
         tree = html.fromstring(page_content)
         records = get_records(tree)
         write_records(records)
         pages = get_pages(tree, acum=pages)
+        print("Following pages: %s" % ",".join([str(p) for p in pages])) 
 
     return open(output_path, "r")
 
