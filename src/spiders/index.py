@@ -160,9 +160,10 @@ async def crawl(
     word: str,
     start_date: str,
     end_date: str,
+    storage_path: str,
 ) -> None:
 
-    storage = "tmp/%s.csv" % jobid
+    storage = "%s/%s.csv" % (storage_path, jobid)
     if os.path.exists(storage):
         if os.path.isfile(storage):
             await aiofiles.os.remove(storage)
@@ -202,8 +203,11 @@ async def crawl(
 
 
 class WordSpider:
+    def __init__(self, settings):
+        self.settings = settings
+
     async def crawl(
         self, ws: WebSocket, word: str, start_date: str, end_date: str
     ) -> None:
         jobid = "%s.%s.%s" % (word, start_date, end_date)
-        await crawl(ws, jobid, word, start_date, end_date)
+        await crawl(ws, jobid, word, start_date, end_date, self.settings["storage"])

@@ -1,4 +1,5 @@
 # BUILT-INS
+from os import getenv
 import json
 from datetime import datetime as dt
 
@@ -13,11 +14,21 @@ from starlette.responses import FileResponse
 # SOURCE
 from src.spiders import WordSpider
 
+if getenv("OH_ENV") == "production":
+    settings = dict(
+        domain="dadescomunals.tk",
+        port=8000,
+        baseurl="/openhemeroteca/",
+        storage="/tmp",
+    )
+else:
+    settings = dict(domain="localhost", port=8000, baseurl=None, storage="tmp")
+
 app = FastAPI()
 
 app.mount("/public", StaticFiles(directory="src/server/static"), name="static")
 
-spider = WordSpider()
+spider = WordSpider(settings)
 
 
 @app.get("/")
