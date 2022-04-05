@@ -39,14 +39,14 @@ document.addEventListener("DOMContentLoaded", function () {
     );
   });
 
-  const ws = new WebSocket("ws://localhost:8000/ws");
+  const ws = new WebSocket(`ws://${window._env.domain}/${window._env.baseulr}/ws`);
   ws.onmessage = function (event) {
     const data = JSON.parse(event.data);
     if (data.type === "info") {
       $status.innerHTML = `Descarregant resultats coincidents amb la paraula '${data.body.word}<br/><strong>Pàgina ${data.body.page} de ${data.body.total}`;
     } else if (data.type === "event") {
       if (data.body.event === "closed") {
-        fetch("/file/" + data.body.fileId)
+        fetch(window._env.baseurl + "/file/" + data.body.fileId)
           .then(res => res.blob())
           .then(blob => {
             var url = window.URL.createObjectURL(blob);

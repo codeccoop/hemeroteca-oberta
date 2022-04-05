@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
     );
   });
 
-  const ws = new WebSocket(`ws://${window._env.domain}/${window._env.baseulr}/ws`);
+  const ws = new WebSocket(`ws://${window._env.domain}/${window._env.baseurl}/ws`);
   ws.onmessage = function (event) {
     const data = JSON.parse(event.data);
     if (data.type === "info") {
@@ -57,7 +57,6 @@ document.addEventListener("DOMContentLoaded", function () {
             a.click();
             a.remove();
           });
-        window.open("/file/" + data.body.fileId);
       }
     }
     ws.send(JSON.stringify({ type: "response", body: { "status": "sync" } }));
