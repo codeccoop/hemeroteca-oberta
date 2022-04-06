@@ -17,17 +17,23 @@ from src.spiders import WordSpider
 
 if getenv("OH_ENV") == "production":
     settings = dict(
-        domain="dadescomunals.tk",
+        domain="dadescomunals.org",
         port=8000,
-        baseurl="/openhemeroteca/",
+        baseurl="/hemeroteca-oberta/",
         storage="/tmp",
     )
 else:
-    settings = dict(domain="localhost", port=8000, baseurl=None, storage=path.join("..", "storage"))
+    settings = dict(
+        domain="localhost", port=8000, baseurl=None, storage=path.join("..", "storage")
+    )
 
 app = FastAPI()
 
-origins = ["http://localhost:9000"]
+origins = [
+    "http://dadescomunals.org",
+    "https://dadescomunals.org",
+    "http://localhost:9000",
+]
 
 app.add_middleware(
     CORSMiddleware,
@@ -64,4 +70,3 @@ async def websocket(ws: WebSocket):
 @app.get("/file/{id}")
 async def file(id: str) -> FileResponse:
     return FileResponse(path.join(settings["storage"], "%s.csv" % id))
-

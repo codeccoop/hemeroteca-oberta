@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const wsURL =
     process.env.NODE_ENV === "production"
-      ? "wss://dadescomunals.tk/hemeroteca-oberta/ws"
+      ? "wss://dadescomunals.org/hemeroteca-oberta/ws"
       : "ws://localhost:8000/ws";
 
   const ws = new WebSocket(wsURL);
@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", function () {
       if (data.body.event === "closed") {
         const fileURL =
           process.env.NODE_ENV === "production"
-            ? "https://dadescomunals.tk/hemeroteca-oberta/file/" +
+            ? "https://dadescomunals.org/hemeroteca-oberta/file/" +
               data.body.fileId
             : "http://localhost:8000/file/" + data.body.fileId;
         fetch(fileURL)
