@@ -1,23 +1,21 @@
 <!DOCTYPE html>
 <html lang="ca">
 	<head>
-		<title>Hemeroteca Oberta</title>
+		<title><%= htmlWebpackPlugin.options.title %></title>
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<base href="/hemerotecaoberta/" />
-
-		<style rel="stylesheet" href="public/index.css"></style>
 	</head>
 	<body>
-		<main id="app">
-			<form class="app__form">
+		<main class="app">
+            <div class="app__content">
+			<!-- <form class="app__form">
 				<input class="app__input" type="text" name="word" placeholder="Quina paraula vols buscar?" />
 				<input class="app__input" type="date" name="start_date" />
 				<input class="app__input" class="" name="end_date" type="date" />
 				<button class="app__button" name="submit" disabled>Començar</button>
 			</form>
 			<p class="app__status">A l'espera</p>
+            </div> -->
 		</main>
 	</body>
-	<script src="public/index.js"></script>
-	<script src="public/env.js"></script>
+	<script src="main.js"></script>
 </html>

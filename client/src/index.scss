@@ -1,0 +1,51 @@
+html,
+body {
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box;
+  font-size: 18px;
+  font-family: Georgia, "Times New Roman", Times, serif;
+  line-height: 1.8;
+  color: #222;
+}
+
+main.app {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.app__content {
+    margin: 5vh auto;
+    height: 90vh;
+    width: 600px;
+    border-radius: 30px;
+    box-shadow: 0px 0px 10px #0003;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.app__form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    width: 100%;
+}
+
+
+.app__input {
+    padding: .6rem 1.2rem;
+    border-radius: 5px;
+    border: none;
+    border: 1px solid #ddd;
+    background-color: #fcfcfc;
+    width: 400px;
+    margin: 0 auto;
+
+    + .app__input {
+        margin-top: 1rem;
+    }
+}
