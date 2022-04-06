@@ -37,7 +37,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.mount("/public", StaticFiles(directory="src/server/static"), name="static")
+app.mount("/static", StaticFiles(directory="src/server/static"), name="static")
 
 spider = WordSpider(settings)
 

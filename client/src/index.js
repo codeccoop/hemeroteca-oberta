@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const wsURL =
     process.env.NODE_ENV === "production"
-      ? "ws://dadescomunals.tk/hemeroteca-oberta/ws"
+      ? "wss://dadescomunals.tk/hemeroteca-oberta/ws"
       : "ws://localhost:8000/ws";
 
   const ws = new WebSocket(wsURL);

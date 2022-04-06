@@ -55,10 +55,10 @@ module.exports = {
       title: "Hemeroteca Oberta",
       template: "index.html",
       minify: true,
-      base: process.env.NODE_ENV === "production" ? "/hemerotecaoberta/" : null
+      base: process.env.NODE_ENV === "production" ? "/hemeroteca-oberta/static/" : null
     }),
     new CopyPlugin({
-      patterns: [{ from: "public", to: "dist" }]
+      patterns: [{ from: "public", to: "public" }]
     })
   ],
   devServer: {
