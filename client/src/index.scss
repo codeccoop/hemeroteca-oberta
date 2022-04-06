@@ -13,39 +13,97 @@ main.app {
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: #fafafa;
 }
 
 .app__content {
     margin: 5vh auto;
     height: 90vh;
     width: 600px;
-    border-radius: 30px;
-    box-shadow: 0px 0px 10px #0003;
+    border-radius: 50px;
+    box-shadow: 0px 0px 10px #000c, 0px 0px 40px #0005;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
+    background-color: #001c4c;
+    color: white;
 }
 
-.app__form {
+.titles {
+    text-align: center;
+
+    > h1 {
+      margin-bottom: 0px;  
+    }
+
+    > h2 {
+        margin-top: 0px;
+        color: gold;
+        font-size: 1.2rem;
+        line-height: 0;
+        font-weight: 500;
+    }
+}
+
+.form {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    justify-content: center;
     flex: 1;
-    width: 100%;
+    width: 80%;
+    padding: 0 10%;
 }
 
 
-.app__input {
-    padding: .6rem 1.2rem;
-    border-radius: 5px;
-    border: none;
-    border: 1px solid #ddd;
-    background-color: #fcfcfc;
-    width: 400px;
-    margin: 0 auto;
+.form__field {
+    display: block;
 
-    + .app__input {
+    lable {
+        display: block;
+    }
+
+    input {
+        padding: .6rem 1.2rem;
+        border-radius: 5px;
+        border: none;
+        border: 1px solid #ddd;
+        background-color: #fcfcfc;
+        width: calc(100% - 2.4rem);
+        cursor: pointer;
+    }
+
+    + .form__field {
         margin-top: 1rem;
     }
+}
+
+.button {
+    cursor: pointer;
+    background-color: gold;
+    padding: .6rem 1.2rem;
+    border-radius: 5px;
+    border: 1px solid transparent;
+    width: 100%;
+    color: #333;
+    font-weight: bold;
+    transition: background-color 300ms ease, border 300ms ease;
+
+    &[disabled] {
+        cursor: default;
+        background-color: transparent;
+        border: 1px solid white;
+        color: white;
+        opacity: .6;
+    }
+}
+
+.form__button {
+    margin: 2rem auto 0;
+}
+
+.logger {
+    margin-bottom: 2rem;
+    text-align: center;
+    width: 80%;
 }

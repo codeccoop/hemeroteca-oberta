@@ -1,5 +1,5 @@
 # BUILT-INS
-from os import getenv
+from os import getenv, path
 import json
 from datetime import datetime as dt
 
@@ -23,7 +23,7 @@ if getenv("OH_ENV") == "production":
         storage="/tmp",
     )
 else:
-    settings = dict(domain="localhost", port=8000, baseurl=None, storage="tmp")
+    settings = dict(domain="localhost", port=8000, baseurl=None, storage=path.join("..", "storage"))
 
 app = FastAPI()
 
@@ -63,4 +63,5 @@ async def websocket(ws: WebSocket):
 
 @app.get("/file/{id}")
 async def file(id: str) -> FileResponse:
-    return FileResponse("tmp/%s.csv" % id)
+    return FileResponse(path.join(settings["storage"], "%s.csv" % id))
+
