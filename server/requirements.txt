@@ -2,3 +2,4 @@ lxml==4.8.0
 aiohttp
 aiofiles
 fastapi
+uvicorn[standard]

@@ -8,6 +8,7 @@ import aiofiles
 from fastapi import FastAPI, HTTPException, WebSocket
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from starlette.responses import FileResponse
 
@@ -25,6 +26,16 @@ else:
     settings = dict(domain="localhost", port=8000, baseurl=None, storage="tmp")
 
 app = FastAPI()
+
+origins = ["http://localhost:9000"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.mount("/public", StaticFiles(directory="src/server/static"), name="static")
 

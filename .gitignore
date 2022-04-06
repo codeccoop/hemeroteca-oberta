@@ -1,4 +1,9 @@
+# SERVER
 .venv
 __pycache__
 *.csv
-tmp
+storage
+
+# CLIENT
+node_modules
+dist
