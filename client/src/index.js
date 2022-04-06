@@ -1,7 +1,6 @@
 import "./index.scss";
 
 document.addEventListener("DOMContentLoaded", function () {
-  debugger;
   var $app = document.getElementsByClassName("app")[0];
   var $form = $app.getElementsByClassName("form")[0];
   var $inputs = Array.apply(
@@ -45,10 +44,12 @@ document.addEventListener("DOMContentLoaded", function () {
     );
   });
 
+  const schema = window.location.protocol === "http:" ? "ws://" : "wss://";
   const wsURL =
-    process.env.NODE_ENV === "production"
-      ? "wss://dadescomunals.org/hemeroteca-oberta/ws"
-      : "ws://localhost:8000/ws";
+    schema +
+    (process.env.NODE_ENV === "production"
+      ? "dadescomunals.org/hemeroteca-oberta/ws"
+      : "localhost:8000/ws");
 
   const ws = new WebSocket(wsURL);
   ws.onmessage = function (event) {
@@ -59,11 +60,13 @@ document.addEventListener("DOMContentLoaded", function () {
       ws.send(JSON.stringify({ type: "response", body: { status: "sync" } }));
     } else if (data.type === "event") {
       if (data.body.event === "closed") {
+        const schema = window.location.protocol;
         const fileURL =
           process.env.NODE_ENV === "production"
-            ? "https://dadescomunals.org/hemeroteca-oberta/file/" +
+            ? schema +
+              "//dadescomunals.org/hemeroteca-oberta/file/" +
               data.body.fileId
-            : "http://localhost:8000/file/" + data.body.fileId;
+            : schema + "//localhost:8000/file/" + data.body.fileId;
         fetch(fileURL)
           .then(res => res.blob())
           .then(blob => {

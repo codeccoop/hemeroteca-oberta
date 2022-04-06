@@ -3,10 +3,15 @@ body {
   margin: 0px;
   padding: 0px;
   box-sizing: border-box;
-  font-size: 18px;
+  font-size: 14px;
+  line-height: 1.4;
   font-family: Georgia, "Times New Roman", Times, serif;
-  line-height: 1.8;
   color: #222;
+
+  @media screen and (min-width: 500px) and (min-height: 800px) and (orientation: portrait)  {
+    font-size: 18px;
+    line-height: 1.8;
+  }
 }
 
 main.app {
@@ -14,13 +19,16 @@ main.app {
     justify-content: center;
     align-items: center;
     background-color: #fafafa;
+    background-size: 25px 25px;
+    background-image: radial-gradient(circle at center, #001c4c55 1px, #0000 2px);
+    background-repeat: repeat;
 }
 
 .app__content {
-    margin: 5vh auto;
-    height: 90vh;
-    width: 600px;
-    border-radius: 50px;
+    margin: 0;
+    height: 100vh;
+    width: 100%;
+    border-radius: 0px;
     box-shadow: 0px 0px 10px #000c, 0px 0px 40px #0005;
     display: flex;
     align-items: center;
@@ -28,10 +36,18 @@ main.app {
     flex-direction: column;
     background-color: #001c4c;
     color: white;
+
+    @media screen and (min-width: 500px) {
+        margin: 5vh auto;
+        height: 90vh;
+        width: 500px;
+        border-radius: 50px;
+    }
 }
 
 .titles {
     text-align: center;
+    padding: 0 10%;
 
     > h1 {
       margin-bottom: 0px;  
