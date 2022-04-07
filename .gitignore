@@ -3,6 +3,7 @@
 __pycache__
 *.csv
 storage
+server/src/server/static
 
 # CLIENT
 node_modules
