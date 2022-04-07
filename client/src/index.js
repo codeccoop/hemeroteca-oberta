@@ -23,6 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function openSocket() {
+    $logger.children[1].disabled = true;
     const schema = window.location.protocol === "http:" ? "ws://" : "wss://";
     const wsURL =
       schema +
@@ -67,13 +68,11 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     ws.onclose = function (ev) {
-      console.log(ev);
       $submit.disabled = true;
     };
 
     return new Promise((done, error) => {
       ws.onopen = function (ev) {
-        console.log(ev);
         done(ws);
       };
 
