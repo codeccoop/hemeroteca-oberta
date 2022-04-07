@@ -22,6 +22,72 @@ document.addEventListener("DOMContentLoaded", function () {
     }, true);
   }
 
+  function openSocket() {
+    const schema = window.location.protocol === "http:" ? "ws://" : "wss://";
+    const wsURL =
+      schema +
+      (process.env.NODE_ENV === "production"
+        ? "dadescomunals.org/hemeroteca-oberta/ws"
+        : "localhost:8000/ws");
+
+    const ws = new WebSocket(wsURL);
+
+    ws.onmessage = function (event) {
+      const data = JSON.parse(event.data);
+      if (data.type === "info") {
+        $logger.children[0].innerHTML = `Descarregant resultats coincidents amb la paraula '${data.body.word}<br/><strong>Pàgina ${data.body.page} de ${data.body.total}`;
+
+        ws.send(JSON.stringify({ type: "response", body: { status: "sync" } }));
+      } else if (data.type === "event") {
+        if (data.body.event === "closed") {
+          const schema = window.location.protocol;
+          const fileURL =
+            process.env.NODE_ENV === "production"
+              ? schema +
+                "//dadescomunals.org/hemeroteca-oberta/file/" +
+                data.body.fileId
+              : schema + "//localhost:8000/file/" + data.body.fileId;
+          fetch(fileURL)
+            .then(res => res.blob())
+            .then(blob => {
+              $logger.children[1].disabled = false;
+              $logger.children[1].addEventListener("click", function () {
+                var url = window.URL.createObjectURL(blob);
+                var a = document.createElement("a");
+                a.href = url;
+                a.download = data.body.fileId + ".csv";
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                $logger.children[1].disabled = true;
+              });
+            });
+        }
+      }
+    };
+
+    ws.onclose = function (ev) {
+      console.log(ev);
+      $submit.disabled = true;
+    };
+
+    return new Promise((done, error) => {
+      ws.onopen = function (ev) {
+        console.log(ev);
+        done(ws);
+      };
+
+      ws.onerror = function (ev) {
+        console.warn(ev);
+        try {
+          ws.close();
+        } catch (err) {}
+      };
+    });
+
+    return ws;
+  }
+
   $inputs.forEach(function ($input) {
     $input.addEventListener("input", function () {
       query[$input.getAttribute("name")] = $input.value;
@@ -36,53 +102,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (isQueryReady() === false) return;
 
-    ws.send(
-      JSON.stringify({
-        type: "query",
-        ...query
-      })
-    );
+    openSocket().then(ws => {
+      ws.send(
+        JSON.stringify({
+          type: "query",
+          ...query
+        })
+      );
+    });
   });
-
-  const schema = window.location.protocol === "http:" ? "ws://" : "wss://";
-  const wsURL =
-    schema +
-    (process.env.NODE_ENV === "production"
-      ? "dadescomunals.org/hemeroteca-oberta/ws"
-      : "localhost:8000/ws");
-
-  const ws = new WebSocket(wsURL);
-  ws.onmessage = function (event) {
-    const data = JSON.parse(event.data);
-    if (data.type === "info") {
-      $logger.children[0].innerHTML = `Descarregant resultats coincidents amb la paraula '${data.body.word}<br/><strong>Pàgina ${data.body.page} de ${data.body.total}`;
-
-      ws.send(JSON.stringify({ type: "response", body: { status: "sync" } }));
-    } else if (data.type === "event") {
-      if (data.body.event === "closed") {
-        const schema = window.location.protocol;
-        const fileURL =
-          process.env.NODE_ENV === "production"
-            ? schema +
-              "//dadescomunals.org/hemeroteca-oberta/file/" +
-              data.body.fileId
-            : schema + "//localhost:8000/file/" + data.body.fileId;
-        fetch(fileURL)
-          .then(res => res.blob())
-          .then(blob => {
-            $logger.children[1].disabled = false;
-            $logger.children[1].addEventListener("click", function () {
-              var url = window.URL.createObjectURL(blob);
-              var a = document.createElement("a");
-              a.href = url;
-              a.download = data.body.fileId + ".csv";
-              document.body.appendChild(a);
-              a.click();
-              a.remove();
-              $logger.children[1].disabled = true;
-            });
-          });
-      }
-    }
-  };
 });
