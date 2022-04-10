@@ -61,7 +61,7 @@ async def get_page(
         return b""
 
     url = get_url(word, start_date, end_date, page)
-    print("Request from <%s>" % url)
+    # print("Request from <%s>" % url)
     try:
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as res:
@@ -70,9 +70,9 @@ async def get_page(
                 else:
                     raise aiohttp.ClientError
     except aiohttp.ClientError:
-        print("Can't reach the page <%s>" % url)
+        # print("Can't reach the page <%s>" % url)
         await asyncio.sleep(random.randint(0, 5))
-        print("Retry")
+        # print("Retry")
         return await get_page(word, start_date, end_date, page, tries + 1)
 
 
@@ -131,7 +131,6 @@ def get_query_count(tree: html.HtmlElement) -> int:
 
 
 async def write_records(records: List[dict], fpath: str = "resultats.csv") -> None:
-
     if not os.path.isfile(fpath):
         Path(fpath).touch()
 
@@ -168,7 +167,7 @@ async def crawl(
         if os.path.isfile(storage):
             await aiofiles.os.remove(storage)
 
-    print("Search results for %s from %s to %s" % (word, start_date, end_date))
+    # print("Search results for %s from %s to %s" % (word, start_date, end_date))
     page_content = await get_page(word, start_date, end_date)
     tree = html.fromstring(page_content)
     count = get_query_count(tree)
@@ -177,7 +176,12 @@ async def crawl(
     pages = get_pages(tree, [1])
 
     await ws.send_text(
-        json.dumps({"type": "info", "body": {"word": word, "page": 1, "total": count}})
+        json.dumps(
+            {
+                "type": "info",
+                "body": {"word": word, "page": min(count, 1), "total": count},
+            }
+        )
     )
 
     while len(pages) > 0:
@@ -188,7 +192,6 @@ async def crawl(
         records = get_records(tree)
         await write_records(records, storage)
         pages = get_pages(tree, acum=pages)
-        print(pages)
 
         confirmation = await ws.receive_text()
         await ws.send_text(

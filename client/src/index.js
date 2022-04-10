@@ -36,9 +36,15 @@ document.addEventListener("DOMContentLoaded", function () {
     ws.onmessage = function (event) {
       const data = JSON.parse(event.data);
       if (data.type === "info") {
-        $logger.children[0].innerHTML = `Descarregant resultats coincidents amb la paraula '${data.body.word}<br/><strong>Pàgina ${data.body.page} de ${data.body.total}`;
-
-        ws.send(JSON.stringify({ type: "response", body: { status: "sync" } }));
+        if (data.body.total === 0) {
+          $logger.children[0].innerHTML = "No s'han trobat coincidències";
+          ws.close();
+        } else {
+          $logger.children[0].innerHTML = `Descarregant resultats coincidents amb la paraula '${data.body.word}<br/><strong>Pàgina ${data.body.page} de ${data.body.total}`;
+          ws.send(
+            JSON.stringify({ type: "response", body: { status: "sync" } })
+          );
+        }
       } else if (data.type === "event") {
         if (data.body.event === "closed") {
           const schema = window.location.protocol;
@@ -89,7 +95,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
   $inputs.forEach(function ($input) {
     $input.addEventListener("input", function () {
-      query[$input.getAttribute("name")] = $input.value;
+      let name = $input.getAttribute("name");
+      let value = $input.value;
+      // if (name === "word") value = value.replace(/\s+/, "+");
+      // value = encodeURIComponent(value);
+      query[name] = value;
       $submit.disabled = !isQueryReady();
     });
   });
