@@ -9,10 +9,9 @@ import traceback
 import aiofiles
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from starlette.responses import FileResponse
 
 # SOURCE
 from src.spiders import WordSpider

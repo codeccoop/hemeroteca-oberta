@@ -11,6 +11,7 @@ from typing import List
 import asyncio
 import json
 import math
+import unicodedata
 
 # VENDOR
 import aiohttp
@@ -212,5 +213,11 @@ class WordSpider:
     async def crawl(
         self, ws: WebSocket, word: str, start_date: str, end_date: str
     ) -> None:
-        jobid = "%s.%s.%s" % (word, start_date, end_date)
+
+        word_id = re.sub(
+            r"\s",
+            "+",
+            unicodedata.normalize("NFKC", word).encode("ascii", "ignore").decode(),
+        )
+        jobid = "%s.%s.%s" % (word_id, start_date, end_date)
         await crawl(ws, jobid, word, start_date, end_date, self.settings["storage"])

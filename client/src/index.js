@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", function () {
           $logger.children[0].innerHTML = "No s'han trobat coincidències";
           ws.close();
         } else {
-          $logger.children[0].innerHTML = `Descarregant resultats coincidents amb la paraula '${data.body.word}<br/><strong>Pàgina ${data.body.page} de ${data.body.total}`;
+          $logger.children[0].innerHTML = `Descarregant resultats coincidents amb la paraula '${data.body.word}'<br/><strong>Pàgina ${data.body.page} de ${data.body.total}`;
           ws.send(
             JSON.stringify({ type: "response", body: { status: "sync" } })
           );
@@ -53,7 +53,9 @@ document.addEventListener("DOMContentLoaded", function () {
               ? schema +
                 "//dadescomunals.org/hemeroteca-oberta/file/" +
                 data.body.fileId
-              : schema + "//localhost:8000/file/" + data.body.fileId;
+              : schema +
+                "//localhost:8000/file/" +
+                encodeURIComponent(data.body.fileId);
           fetch(fileURL)
             .then(res => res.blob())
             .then(blob => {
