@@ -1,22 +1,27 @@
 # BUILT-INS
-from os import getenv, path
+import time
+import os
 import json
 from datetime import datetime as dt
 import sys
 import traceback
+from concurrent.futures import ThreadPoolExecutor
+import asyncio
+from glob import glob
+import signal
 
 # VENDOR
 import aiofiles
+import aiofiles.os
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
 
 # SOURCE
 from src.spiders import WordSpider
 
-if getenv("OH_ENV") == "production":
+if os.getenv("OH_ENV") == "production":
     settings = dict(
         domain="dadescomunals.org",
         port=8000,
@@ -25,7 +30,10 @@ if getenv("OH_ENV") == "production":
     )
 else:
     settings = dict(
-        domain="localhost", port=8000, baseurl=None, storage=path.join("..", "storage")
+        domain="localhost",
+        port=8000,
+        baseurl=None,
+        storage=os.path.join("..", "storage"),
     )
 
 app = FastAPI()
@@ -76,4 +84,22 @@ async def websocket(ws: WebSocket):
 
 @app.get("/file/{id}")
 async def file(id: str) -> FileResponse:
-    return FileResponse(path.join(settings["storage"], "%s.csv" % id))
+    return FileResponse(os.path.join(settings["storage"], "%s.csv" % id))
+
+
+if os.getenv("OH_ENV") == "production":
+
+    async def cleaner():
+        while True:
+            print("cleaning")
+            for file_path in glob(os.path.join(settings["storage"], "*.csv")):
+                print(file_path)
+                creation_dt = os.stat(file_path).st_ctime
+                print(creation_dt)
+                if dt.now().timestamp() - creation_dt > 86400:
+                    await aiofiles.os.remove(file_path)
+
+            await asyncio.sleep(60)
+
+    loop = asyncio.get_event_loop()
+    cleaner_task = loop.create_task(cleaner())
