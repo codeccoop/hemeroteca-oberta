@@ -6,17 +6,15 @@ pipeline {
 	stages {
 		stage('Build') {
 			steps {
-				cd client
-				NODE_ENV=production npm install
-				npm run build
-				cp -rf dist ../src/server/static
-            		}
-        	}
+				sh 'echo $PWD && ls -lh'
+				sh 'cd client && NODE_ENV=production npm install && npm run build && cp -rf dist/* ../server/src/server/static'
+            }
+        }
 
 		stage('Deploy') {
 			zip -r hemeroteca-oberta.zip main.py requirements.txt run.sh src
 			scp hemeroteca-oberta.zip orzo@192.168.10.130:hemeroteca-oberta.zip
 			ssh orzo@dadescomunals.org "sudo su; cd /opt/www/aps/hemeroteca-oberta; unzip /home/orzo/hemeroteca-oberta.zip -d .; kill $(cat process.pid); ./run.sh"
 		}
-    	}
+    }
 }
