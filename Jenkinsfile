@@ -7,15 +7,16 @@ pipeline {
 		stage('Build') {
 			steps {
 				sh 'node --version > ./file'
-				stash includes: './file', name: 'testfile'
+				// stash includes: './file', name: 'testfile'
             }
         }
 
 		stage('Deploy') {
 			steps {
-				unstash 'testfile'
+				// unstash 'testfile'
 				sh 'echo $PWD && ls -lh'
-				sh 'cat ./file'
+				sh 'ssh orzo@192.168.10.130 "echo $HOSTNAME"'
+				// sh 'cat ./file'
 			}
 		}
     }
