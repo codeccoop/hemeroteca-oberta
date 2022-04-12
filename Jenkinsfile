@@ -13,8 +13,8 @@ pipeline {
 
 		stage('Deploy') {
 			steps {
+				unstash 'testfile'
 				sh 'echo $PWD && ls -lh'
-				{ unstash 'testfile' }
 				sh 'cat ./file'
 			}
 		}
