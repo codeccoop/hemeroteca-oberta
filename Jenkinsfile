@@ -1,13 +1,12 @@
 pipeline {
 	agent {
-		docker { image 'ubuntu:20.04' }
+		docker { image 'node:16-alpine' }
 	}
 	
 	stages {
 		stage('Build') {
 			steps {
-				sh 'echo $PWD && ls -lh'
-				sh 'echo "Hello World" > file'
+				sh 'node --version > file'
 				stash includes: './file', name: 'testfile'
             }
         }
@@ -15,7 +14,7 @@ pipeline {
 		stage('Deploy') {
 			steps {
 				sh 'echo $PWD && ls -lh'
-				unstash 'testfile'
+				{ unstash 'testfile' }
 				sh 'cat ./file'
 			}
 		}
