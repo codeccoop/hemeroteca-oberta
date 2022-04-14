@@ -6,8 +6,8 @@ pipeline {
 			steps {
 				sh '''
 					cd client
-					NODE_ENV=production npm install
-					NODE_ENV=production npm run build
+					npm install
+					npm run build
 					cp -rf dist/* ../server/src/server/static
 				'''
             }
