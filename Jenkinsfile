@@ -4,8 +4,10 @@ pipeline {
 	stages {
 		stage('Build') {
 			steps {
-				sh 'node --version'
-				// stash includes: './file', name: 'testfile'
+				sh '''
+					NODE_ENV=production npm install
+					NODE_ENV=production npm run build
+				'''
             }
         }
 
@@ -20,6 +22,7 @@ pipeline {
 				withCredentials([sshUserPrivateKey(credentialsId: 'orzopad', keyFileVariable: 'KEY_FILE')]) {
 					// unstash 'testfile'
 					sh '''
+						ls -ls .
 						mkdir -p .ssh
                     	more ${KEY_FILE}
                     	cat ${KEY_FILE} > ./key_key.key
