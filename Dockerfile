@@ -1,9 +1,7 @@
-FROM node:16-alpine
+FROM jenkins/agent:latest
 
 WORKDIR /opt/builds
 
-RUN 'apk update && apk add openssh'
-RUN 'servie ssh start'
-RUN 'apk add openjdk11'
+RUN 'apt update && apt -y dist-upgrade && apt install nodejs'
 
 EXPOSE 22
