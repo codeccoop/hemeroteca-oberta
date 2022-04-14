@@ -1,5 +1,10 @@
 #! /usr/bin/env bash
 
+if [ -f process.pid ];
+then
+    kill $(cat process.pid)
+fi
+
 OH_ENV=production .venv/bin/uvicorn --proxy-headers main:app &
 
 pid=$!
