@@ -1,4 +1,4 @@
-FROM jenkins/agent:latest-jdk11
+FROM node:14-alpine
 
 WORKDIR /home/jenkins
 
