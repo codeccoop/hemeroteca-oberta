@@ -5,8 +5,10 @@ pipeline {
 		stage('Build') {
 			steps {
 				sh '''
+					cd client
 					NODE_ENV=production npm install
 					NODE_ENV=production npm run build
+					cp -rf dist/* ../server/src/server/static
 				'''
             }
         }
@@ -22,7 +24,7 @@ pipeline {
 				withCredentials([sshUserPrivateKey(credentialsId: 'orzopad', keyFileVariable: 'KEY_FILE')]) {
 					// unstash 'testfile'
 					sh '''
-						ls -ls .
+						ls -ls server/src/static
 						mkdir -p .ssh
                     	more ${KEY_FILE}
                     	cat ${KEY_FILE} > ./key_key.key
