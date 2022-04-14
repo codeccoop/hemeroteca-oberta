@@ -2,6 +2,6 @@ FROM jenkins/agent:latest
 
 WORKDIR /opt/builds
 
-RUN 'sudo apt update && sudo apt -y dist-upgrade && sudo apt install nodejs'
+RUN apt update && apt -y dist-upgrade && apt install -y nodejs
 
 EXPOSE 22
