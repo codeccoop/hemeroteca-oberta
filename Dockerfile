@@ -1,7 +1,5 @@
 FROM node:14-alpine
 
-WORKDIR /home/jenkins
-
-RUN apt update && apt install -y nodejs
+RUN apk update && apk add openssh && service sshd start
 
 EXPOSE 22
