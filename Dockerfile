@@ -1,6 +1,6 @@
-FROM jenkins/agent:latest
+FROM jenkins/agent:latest-jdk11
 
-WORKDIR /opt/builds
+WORKDIR /home/jenkins
 
 RUN apt update && apt install -y nodejs
 
