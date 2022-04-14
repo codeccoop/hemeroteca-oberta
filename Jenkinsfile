@@ -15,15 +15,20 @@ pipeline {
                 	currentBuild.result == null || currentBuild.result == 'SUCCESS' 
               	}
             }
-			environment {
-				ID_RSA = credentials('orzopad')
-			}
+
 			steps {
-				// unstash 'testfile'
-				sh 'mkdir -p .ssh && echo "$ID_RSA" > .ssh/id_rsa'
-				sh 'cat .ssh/id_rsa'
-				sh 'ssh -i .ssh/id_rsa orzo@192.168.10.130 cat /etc/hostname'
-				// sh 'cat ./file'
+				ithCredentials([sshUserPrivateKey(credentialsId: 'orzopad', keyFileVariable: 'KEY_FILE')]) {
+					// unstash 'testfile'
+					sh '''
+						mkdir -p .ssh
+                    	more ${KEY_FILE}
+                    	cat ${KEY_FILE} > ./key_key.key
+                    	eval $(ssh-agent -s)
+                    	chmod 600 ./key_key.key
+                    	ssh-add ./key_key.key
+                    	ssh orzo@192.168.10.130 cat /etc/hostname
+                    '''
+				}
 			}
 		}
     }
