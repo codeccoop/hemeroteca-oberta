@@ -9,7 +9,7 @@ pipeline {
 					npm install
 					npm run build
 					cd ..
-					tar -cvf ../client.tar dist
+					tar -cvf client.tar dist
 				'''
 				stash(name: 'client-dist', includes: 'client.tar', useDefaultExcludes: true)
             }
