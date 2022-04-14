@@ -6,7 +6,7 @@ pipeline {
 	stages {
 		stage('Build') {
 			steps {
-				sh 'node --version > ./file'
+				sh 'node --version'
 				// stash includes: './file', name: 'testfile'
             }
         }
