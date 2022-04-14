@@ -24,7 +24,7 @@ pipeline {
 			steps {
 				withCredentials([sshUserPrivateKey(credentialsId: 'orzopad', keyFileVariable: 'KEY_FILE')]) {
 					unstash 'client-dist'
-        			sh 'tar -xvf --strip-components=1 -C server/src/server/static client.tar'
+        			sh 'tar --strip-components=1 -C server/src/server/static -xvf client.tar'
 					sh 'tar -cvf hemeroteca.tar server/main.py server/requierements.txt server/run.sh server/src'
 					sh '''
 						ls -ls server/src/static
