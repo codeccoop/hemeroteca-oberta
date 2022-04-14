@@ -21,7 +21,7 @@ pipeline {
 			steps {
 				// unstash 'testfile'
 				sh 'mkdir -p .ssh && echo ${ID_RSA} > .ssh/id_rsa'
-				sh 'ssh orzo@192.168.10.130 "echo $HOSTNAME"'
+				sh 'ssh -i .ssh/id_rsa orzo@192.168.10.130 cat /etc/hostname'
 				// sh 'cat ./file'
 			}
 		}
