@@ -17,7 +17,7 @@ pipeline {
             }
 
 			steps {
-				ithCredentials([sshUserPrivateKey(credentialsId: 'orzopad', keyFileVariable: 'KEY_FILE')]) {
+				withCredentials([sshUserPrivateKey(credentialsId: 'orzopad', keyFileVariable: 'KEY_FILE')]) {
 					// unstash 'testfile'
 					sh '''
 						mkdir -p .ssh
