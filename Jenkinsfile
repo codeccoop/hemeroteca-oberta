@@ -28,7 +28,7 @@ pipeline {
 					sh '''
 						mkdir -p server/src/server/static
 						tar --strip-components=1 -C server/src/server/static -xvf client.tar
-						tar -cvf hemeroteca.tar server/main.py server/requirements.txt server/run.sh server/serc
+						tar -cvf hemeroteca.tar server/main.py server/requirements.txt server/run.sh server/src
 
 						mkdir -p .ssh
                     	more ${KEY_FILE}
