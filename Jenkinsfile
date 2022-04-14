@@ -8,8 +8,9 @@ pipeline {
 					cd client
 					npm install
 					npm run build
-					cp -rf dist/* ../server/src/server/static
+					tar -cvf client-dist.tar dist
 				'''
+				stash(name: 'client-dist', includes: 'dist.tar', useDefaultExcludes: true)
             }
         }
 
@@ -22,7 +23,9 @@ pipeline {
 
 			steps {
 				withCredentials([sshUserPrivateKey(credentialsId: 'orzopad', keyFileVariable: 'KEY_FILE')]) {
-					// unstash 'testfile'
+					unstash 'client-dist'
+        			sh 'tar -xvf client-dist.tar --strip-components=1 -C server/src/server/static'
+					sh 'tar -cvf server-dist.tar server/main.py server/requierements.txt server/run.sh server/src'
 					sh '''
 						ls -ls server/src/static
 						mkdir -p .ssh
@@ -31,7 +34,7 @@ pipeline {
                     	eval $(ssh-agent -s)
                     	chmod 600 ./key_key.key
                     	ssh-add ./key_key.key
-                    	ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" orzo@192.168.10.130 cat /etc/hostname
+                    	scp -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" server-dist.tar orzo@192.168.10.130:server-dist.tar
                     '''
 				}
 			}
