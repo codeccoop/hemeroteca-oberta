@@ -26,7 +26,7 @@ pipeline {
                     	eval $(ssh-agent -s)
                     	chmod 600 ./key_key.key
                     	ssh-add ./key_key.key
-                    	ssh orzo@192.168.10.130 cat /etc/hostname
+                    	ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" orzo@192.168.10.130 cat /etc/hostname
                     '''
 				}
 			}
