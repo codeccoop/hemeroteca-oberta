@@ -10,9 +10,17 @@ pipeline {
         }
 
 		stage('Deploy') {
+			when {
+            	expression {
+                	currentBuild.result == null || currentBuild.result == 'SUCCESS' 
+              	}
+            }
+			environment {
+				ID_RSA = credentials('orzopad')
+			}
 			steps {
 				// unstash 'testfile'
-				sh 'echo $PWD && ls -lh'
+				sh 'mkdir -p .ssh && echo ${ID_RSA} > .ssh/id_rsa'
 				sh 'ssh orzo@192.168.10.130 "echo $HOSTNAME"'
 				// sh 'cat ./file'
 			}
