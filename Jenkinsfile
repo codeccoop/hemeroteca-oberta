@@ -1,5 +1,9 @@
 pipeline {
 	agent { dockerfile true }
+
+	environment {
+		DADESCOMUNALS_USER = credentials("dadescomunals-user")
+	}
 	
 	stages {
 		stage('Build') {
@@ -12,15 +16,15 @@ pipeline {
 					mv client.tar ../client.tar
 				'''
 				stash(name: 'client-dist', includes: 'client.tar', useDefaultExcludes: true)
-            }
-        }
+            		}
+        	}
 
 		stage('Deploy') {
 			when {
-            	expression {
-                	currentBuild.result == null || currentBuild.result == 'SUCCESS' 
-              	}
-            }
+				expression {
+                			currentBuild.result == null || currentBuild.result == 'SUCCESS' 
+              			}
+            		}
 
 			steps {
 				withCredentials([sshUserPrivateKey(credentialsId: 'jenkins-server', keyFileVariable: 'KEY_FILE')]) {
@@ -37,13 +41,13 @@ pipeline {
 						chmod 600 ./key_key.key
 						ssh-add ./key_key.key
 
-						scp -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" hemeroteca.tar orzo@192.168.10.130:hemeroteca.tar
+						scp -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" hemeroteca.tar ${DADESCOMUNALS_USER}@dadescomunals.lan:hemeroteca.tar
 
-						ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" orzo@192.168.10.130 <<EOF
+						ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" ${DADESCOMUNALS_USER}@dadescomunals.lan <<EOF
 							cd /opt/www/apps/hemeroteca-oberta
 
 							echo "Decompress deployed artifact"
-							sudo tar -C $PWD --strip-components=1 -xvf $HOME/hemeroteca.tar
+							sudo tar -C $PWD --strip-components=1 -xvf /home/${DADESCOMUNALS_USER}/hemeroteca.tar
 							if [ -d .venv ];
 							then
 								sudo rm -rf .venv
@@ -60,5 +64,5 @@ pipeline {
 				}
 			}
 		}
-    }
+    	}
 }
