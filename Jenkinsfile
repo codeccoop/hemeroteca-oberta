@@ -42,11 +42,11 @@ pipeline {
 						ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" orzo@192.168.10.130 <<EOF
 							cd /opt/www/apps/hemeroteca-oberta
 
-							echo "Deliver new client build to the server/static folder"
+							echo "Decompress deployed artifact"
 							sudo tar -C $PWD --strip-components=1 -xvf $HOME/hemeroteca.tar
 							if [ -d .venv ];
 							then
-								rm -rf .venv
+								sudo rm -rf .venv
 							fi
 
 							echo "Install python dependencies"
