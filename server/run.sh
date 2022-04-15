@@ -5,7 +5,7 @@ then
     kill $(cat process.pid)
 fi
 
-OH_ENV=production .venv/bin/uvicorn --proxy-headers main:app &
+OH_ENV=production nohup .venv/bin/uvicorn --proxy-headers main:app &>/dev/null &
 
 pid=$!
 echo "$pid" > process.pid
