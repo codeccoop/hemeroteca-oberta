@@ -45,9 +45,11 @@ pipeline {
 
 						ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" ${DADESCOMUNALS_USER}@dadescomunals.lan <<EOF
 							cd /opt/www/apps/hemeroteca-oberta
+							echo $PWD
+							echo ${DADESCOMUNALS_USER}
 
 							echo "Decompress deployed artifact"
-							sudo tar -C $PWD --strip-components=1 -xvf /home/${DADESCOMUNALS_USER}/hemeroteca.tar
+							sudo tar -C . --strip-components=1 -xvf /home/${DADESCOMUNALS_USER}/hemeroteca.tar
 							if [ -d .venv ];
 							then
 								sudo rm -rf .venv
