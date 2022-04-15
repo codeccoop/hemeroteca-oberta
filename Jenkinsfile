@@ -23,7 +23,7 @@ pipeline {
             }
 
 			steps {
-				withCredentials([sshUserPrivateKey(credentialsId: 'orzopad', keyFileVariable: 'KEY_FILE')]) {
+				withCredentials([sshUserPrivateKey(credentialsId: 'jenkins-server', keyFileVariable: 'KEY_FILE')]) {
 					unstash 'client-dist'
 					sh '''
 						mkdir -p server/src/server/static
