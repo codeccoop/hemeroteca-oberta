@@ -38,7 +38,7 @@ pipeline {
                     	ssh-add ./key_key.key
 						
                     	scp -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" hemeroteca.tar orzo@192.168.10.130:hemeroteca.tar
-						ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" orzo@192.168.10.130 '/usr/bin/env bash <<EOF
+						ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" orzo@192.168.10.130 <<EOF
 							cd /opt/www/apps/hemeroteca-oberta
 							sudo tar -C $PWD --strip-components=1 -xvf $HOME/hemeroteca.tar
 							if [ -d .venv ];
@@ -48,7 +48,7 @@ pipeline {
 							sudo virtualenv -p python3 .venv
 							sudo .venv/bin/pip install -r requirements.txt
 							sudo ./run.sh
-						EOF'
+						EOF
                     '''
 				}
 			}
