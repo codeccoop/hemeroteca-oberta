@@ -45,21 +45,16 @@ pipeline {
 
 						ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" ${DADESCOMUNALS_USER}@dadescomunals.lan <<EOF
 							cd /opt/www/apps/hemeroteca-oberta
-							echo $PWD
-							echo ${DADESCOMUNALS_USER}
 
-							echo "Decompress deployed artifact"
 							sudo tar -C . --strip-components=1 -xvf /home/${DADESCOMUNALS_USER}/hemeroteca.tar
 							if [ -d .venv ];
 							then
 								sudo rm -rf .venv
 							fi
 
-							echo "Install python dependencies"
 							sudo virtualenv -p python3 .venv
 							sudo .venv/bin/pip install -r requirements.txt
 
-							echo "Starting the server application"
 							sudo ./run.sh
 						EOF
 					'''.stripIndent()
