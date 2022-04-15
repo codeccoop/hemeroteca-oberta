@@ -31,28 +31,32 @@ pipeline {
 						tar -cvf hemeroteca.tar server/main.py server/requirements.txt server/run.sh server/src
 
 						mkdir -p .ssh
-                    	more ${KEY_FILE}
-                    	cat ${KEY_FILE} > ./key_key.key
-                    	eval $(ssh-agent -s)
-                    	chmod 600 ./key_key.key
-                    	ssh-add ./key_key.key
-						
-                    	scp -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" hemeroteca.tar orzo@192.168.10.130:hemeroteca.tar
-						ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" orzo@192.168.10.130 << EOF
+						more ${KEY_FILE}
+						cat ${KEY_FILE} > ./key_key.key
+						eval $(ssh-agent -s)
+						chmod 600 ./key_key.key
+						ssh-add ./key_key.key
+
+						scp -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" hemeroteca.tar orzo@192.168.10.130:hemeroteca.tar
+
+						ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" orzo@192.168.10.130 <<EOF
 							cd /opt/www/apps/hemeroteca-oberta
+
+							echo "Deliver new client build to the server/static folder"
 							sudo tar -C $PWD --strip-components=1 -xvf $HOME/hemeroteca.tar
 							if [ -d .venv ];
 							then
 								rm -rf .venv
 							fi
+
+							echo "Install python dependencies"
 							sudo virtualenv -p python3 .venv
 							sudo .venv/bin/pip install -r requirements.txt
 
-                            echo "Starting the server application"
+							echo "Starting the server application"
 							sudo ./run.sh
-                            echo "Done"
 						EOF
-                    '''
+					'''.stripIndent()
 				}
 			}
 		}
